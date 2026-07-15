@@ -60,8 +60,22 @@ module.exports = async function handler(request, response) {
 
     const [winner] = await winnerResponse.json();
     if (!winner) {
+      if (queriedHolderRank) {
+        return json(response, 200, {
+          found: true,
+          source: "top-holder",
+          wallet: maskWallet(query),
+          holder: {
+            checked: true,
+            found: true,
+            rank: queriedHolderRank,
+          },
+        });
+      }
+
       return json(response, 200, {
         found: false,
+        source: "none",
         holder: {
           checked: walletLookup,
           found: Boolean(queriedHolderRank),
@@ -73,6 +87,7 @@ module.exports = async function handler(request, response) {
     const winnerHolderRank = holderRanks.get(winner.wallet_address) || null;
     return json(response, 200, {
       found: true,
+      source: "wl-winner",
       xUsername: winner.x_username,
       wallet: maskWallet(winner.wallet_address),
       selectedAt: winner.selected_at,
