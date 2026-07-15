@@ -39,3 +39,7 @@ create unique index if not exists wl_winners_entry_id_key
 
 create index if not exists wl_winners_raffle_id_idx
   on public.wl_winners (raffle_id);
+
+alter table public.wl_entries enable row level security;
+alter table public.wl_raffles enable row level security;
+alter table public.wl_winners enable row level security;
