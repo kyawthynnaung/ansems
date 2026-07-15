@@ -1164,20 +1164,40 @@
         width: 100%;
         max-width: calc(100vw - 24px);
         max-height: calc(100vh - 24px);
-        padding: 56px 12px 14px;
+        padding: 56px 10px 14px;
         overflow-x: hidden;
       }
 
       .community-panel h2 {
         padding-right: 0;
-        font-size: clamp(1.45rem, 6.8vw, 1.82rem);
-        line-height: 1.04;
+        margin-bottom: 6px;
+        font-size: clamp(1.35rem, 6.2vw, 1.72rem);
+        line-height: 1.08;
         overflow-wrap: anywhere;
       }
 
       .community-panel p {
         line-height: 1.45;
         overflow-wrap: anywhere;
+      }
+
+      .wl-header {
+        gap: 8px;
+        padding-bottom: 12px;
+      }
+
+      .wl-header .eyebrow {
+        margin-bottom: 8px;
+        font-size: 0.68rem;
+        letter-spacing: 0;
+      }
+
+      .wl-header .eyebrow::before {
+        width: 18px;
+      }
+
+      .wl-header > div > p:last-child {
+        font-size: 0.92rem;
       }
 
       .modal-close {
@@ -1189,8 +1209,12 @@
       .task-panel,
       .wizard-card,
       .wizard-body,
-      .wizard-pane {
+      .wizard-pane,
+      .task-card,
+      .field,
+      .field input {
         min-width: 0;
+        max-width: 100%;
       }
 
       .nav {
@@ -1597,9 +1621,9 @@
           </button>
           <div class="wl-header">
             <div>
-              <p class="eyebrow">Whitelist application</p>
-              <h2 id="wlTitle">Enter ANSEMS WL.</h2>
-              <p>Complete the steps below, then submit your X handle and ANSEM holding wallet for manual review.</p>
+              <p class="eyebrow">WL Application</p>
+              <h2 id="wlTitle">ANSEMS Whitelist</h2>
+              <p>Complete the steps and submit your X handle with your ANSEM holding wallet.</p>
             </div>
             <span class="wl-status">WL OPEN</span>
           </div>
