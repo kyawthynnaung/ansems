@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const { json, supabaseFetch } = require("./_supabase");
 
 const normalizeHandle = (value = "") => {
@@ -9,6 +11,20 @@ const normalizeHandle = (value = "") => {
 const isHandle = (value = "") => /^@?[A-Za-z0-9_]{1,15}$/.test(String(value).trim());
 const isSolanaAddress = (value = "") => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(String(value).trim());
 const maskWallet = (value = "") => `${value.slice(0, 4)}...${value.slice(-4)}`;
+let holderRankCache;
+
+const getHolderRanks = () => {
+  if (holderRankCache) return holderRankCache;
+
+  const filePath = path.join(process.cwd(), "data", "ansem-top-holder-accounts.txt");
+  const rows = fs.readFileSync(filePath, "utf8")
+    .split(/\r?\n/)
+    .map((row) => row.trim())
+    .filter(Boolean);
+
+  holderRankCache = new Map(rows.map((wallet, index) => [wallet, index + 1]));
+  return holderRankCache;
+};
 
 module.exports = async function handler(request, response) {
   if (request.method !== "POST") {
@@ -29,6 +45,8 @@ module.exports = async function handler(request, response) {
   }
 
   try {
+    const holderRanks = getHolderRanks();
+    const queriedHolderRank = walletLookup ? holderRanks.get(query) || null : null;
     const filter = walletLookup
       ? `wallet_address=eq.${encodeURIComponent(query)}`
       : `x_username=ilike.${encodeURIComponent(normalizeHandle(query))}`;
@@ -42,14 +60,27 @@ module.exports = async function handler(request, response) {
 
     const [winner] = await winnerResponse.json();
     if (!winner) {
-      return json(response, 200, { found: false });
+      return json(response, 200, {
+        found: false,
+        holder: {
+          checked: walletLookup,
+          found: Boolean(queriedHolderRank),
+          rank: queriedHolderRank,
+        },
+      });
     }
 
+    const winnerHolderRank = holderRanks.get(winner.wallet_address) || null;
     return json(response, 200, {
       found: true,
       xUsername: winner.x_username,
       wallet: maskWallet(winner.wallet_address),
       selectedAt: winner.selected_at,
+      holder: {
+        checked: true,
+        found: Boolean(winnerHolderRank),
+        rank: winnerHolderRank,
+      },
     });
   } catch (error) {
     return json(response, 500, { error: "WL status could not be checked." });

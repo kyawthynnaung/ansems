@@ -1531,7 +1531,7 @@
         <a href="#story">Story</a>
         <a href="#gallery">Gallery</a>
         <a href="#details">Details</a>
-        <a href="#checker">WL Checker</a>
+        <a href="#checker">Checker</a>
       </div>
       <a class="cta" href="#wl">Enter WL</a>
       <a class="icon-button" href="#wl" aria-label="Enter whitelist">
@@ -1566,7 +1566,7 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="m9 12 2 2 4-5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              Check WL
+              Check Status
             </a>
           </div>
           <div class="hero-stats" aria-label="Collection statistics">
@@ -1681,10 +1681,10 @@
         <div class="checker-panel">
           <div class="section-heading checker-heading">
             <div>
-              <p class="eyebrow">Final WL Status</p>
-              <h2>Check your whitelist.</h2>
+              <p class="eyebrow">WL / Holder Status</p>
+              <h2>Check your status.</h2>
             </div>
-            <p>Enter your X username or submitted Solana wallet to see whether you are already in the final ANSEMS WL.</p>
+            <p>Enter your X username or wallet to check final WL status and top 1,000 $ANSEM holder eligibility.</p>
           </div>
           <form class="checker-form" id="wlCheckerForm" novalidate>
             <div class="field">
@@ -1692,7 +1692,7 @@
               <input id="wlCheckerInput" type="text" placeholder="@yourhandle or Solana wallet" autocomplete="off" required>
               <span class="field-error" id="wlCheckerError">Enter a valid X username or Solana wallet.</span>
             </div>
-            <button class="cta" type="submit">Check WL</button>
+            <button class="cta" type="submit">Check Status</button>
           </form>
           <p class="checker-result" id="wlCheckerResult" aria-live="polite"></p>
         </div>
@@ -2051,7 +2051,7 @@
       submitButton.disabled = true;
       submitButton.textContent = "Checking...";
       wlCheckerResult.classList.remove("error");
-      wlCheckerResult.textContent = "Checking final WL...";
+      wlCheckerResult.textContent = "Checking status...";
 
       try {
         const response = await fetch("/api/wl-check", {
@@ -2067,11 +2067,15 @@
 
         if (result.found) {
           const selected = result.selectedAt ? ` Selected ${new Date(result.selectedAt).toLocaleString()}.` : "";
+          const holderText = result.holder?.found ? ` Top 1K holder rank: #${result.holder.rank}.` : "";
           wlCheckerResult.classList.remove("error");
-          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}`;
+          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}${holderText}`;
+        } else if (result.holder?.found) {
+          wlCheckerResult.classList.remove("error");
+          wlCheckerResult.textContent = `This wallet is in the top 1,000 $ANSEM holders. Holder rank: #${result.holder.rank}. Final WL match is not saved yet.`;
         } else {
           wlCheckerResult.classList.add("error");
-          wlCheckerResult.textContent = "No final WL match yet. If you submitted already, wait for manual review or raffle results.";
+          wlCheckerResult.textContent = "No final WL or top-holder match yet. If you submitted already, wait for manual review or raffle results.";
         }
       } catch (error) {
         wlCheckerResult.classList.add("error");

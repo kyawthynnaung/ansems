@@ -6,3 +6,4 @@ assets/ansem-hero.png
 assets/ansem-horns-hero.png
 assets/ansem-tattoo.jpg
 .vercel
+api/export_token_holders_*.csv
