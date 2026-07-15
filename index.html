@@ -1716,7 +1716,7 @@
                       <div class="field">
                         <label for="commentLink">Comment link</label>
                         <input id="commentLink" name="commentLink" type="url" placeholder="Paste your X comment link" autocomplete="off" required>
-                        <span class="field-error" id="commentLinkError">Paste the X link to your comment on the WL post.</span>
+                        <span class="field-error" id="commentLinkError">Paste the X link to your comment from the same username entered first.</span>
                       </div>
                       <label class="task-check"><input id="commentedTask" type="checkbox" required> I commented on the official WL post</label>
                     </div>
@@ -1847,6 +1847,11 @@
       return /^https?:\/\/(x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+/i.test(value.trim());
     }
 
+    function getStatusHandle(value) {
+      const match = value.trim().match(/^https?:\/\/(?:x\.com|twitter\.com)\/([A-Za-z0-9_]+)\/status\/\d+/i);
+      return match ? normalizeHandle(match[1]) : "";
+    }
+
     function validateStep(step) {
       clearFieldErrors();
       if (step === 0) {
@@ -1872,13 +1877,19 @@
       }
       if (step === 2) {
         const linkOk = isXLink(commentLink.value);
-        commentLink.classList.toggle("invalid", !linkOk);
-        commentLinkError.classList.toggle("show", !linkOk);
-        if (!linkOk || !commentedTask.checked) {
+        const commentHandle = getStatusHandle(commentLink.value);
+        const usernameMatches = linkOk && commentHandle.toLowerCase() === normalizeHandle(xUsername.value).toLowerCase();
+        commentLink.classList.toggle("invalid", !linkOk || !usernameMatches);
+        commentLinkError.classList.toggle("show", !linkOk || !usernameMatches);
+        if (!linkOk || !usernameMatches || !commentedTask.checked) {
           formNote.classList.add("error");
-          formNote.textContent = !linkOk ? "Paste a valid X comment link." : "Confirm that you commented on the WL post.";
+          formNote.textContent = !linkOk
+            ? "Paste a valid X comment link."
+            : !usernameMatches
+              ? "The comment link must be from the same X username you entered first."
+              : "Confirm that you commented on the WL post.";
         }
-        return linkOk && commentedTask.checked;
+        return linkOk && usernameMatches && commentedTask.checked;
       }
       if (step === 3) {
         if (!repostedTask.checked) {

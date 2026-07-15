@@ -13,6 +13,10 @@ const normalizeHandle = (value = "") => {
 
 const isSolanaAddress = (value = "") => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(String(value).trim());
 const isXLink = (value = "") => /^https?:\/\/(x\.com|twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+/i.test(String(value).trim());
+const getStatusHandle = (value = "") => {
+  const match = String(value).trim().match(/^https?:\/\/(?:x\.com|twitter\.com)\/([A-Za-z0-9_]+)\/status\/\d+/i);
+  return match ? normalizeHandle(match[1]) : "";
+};
 
 module.exports = async function handler(request, response) {
   if (request.method !== "POST") {
@@ -47,6 +51,10 @@ module.exports = async function handler(request, response) {
 
   if (!isXLink(commentLink)) {
     return json(response, 400, { error: "Paste a valid X comment link." });
+  }
+
+  if (getStatusHandle(commentLink).toLowerCase() !== xUsername.toLowerCase()) {
+    return json(response, 400, { error: "Your comment link must come from the same X username you entered." });
   }
 
   if (!tasks.liked || !tasks.commented || !tasks.reposted || !tasks.confirmed) {
