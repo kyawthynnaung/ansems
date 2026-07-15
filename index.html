@@ -43,6 +43,7 @@
       background: var(--bg);
       color: var(--text);
       letter-spacing: 0;
+      overflow-x: hidden;
     }
 
     a {
@@ -1155,9 +1156,41 @@
         place-items: start center;
       }
 
+      .community .section-inner {
+        width: 100%;
+      }
+
       .community-panel {
+        width: 100%;
+        max-width: calc(100vw - 24px);
         max-height: calc(100vh - 24px);
-        padding-top: 62px;
+        padding: 56px 12px 14px;
+        overflow-x: hidden;
+      }
+
+      .community-panel h2 {
+        padding-right: 0;
+        font-size: clamp(1.45rem, 6.8vw, 1.82rem);
+        line-height: 1.04;
+        overflow-wrap: anywhere;
+      }
+
+      .community-panel p {
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+      }
+
+      .modal-close {
+        top: 12px;
+        right: 12px;
+      }
+
+      .form-panel,
+      .task-panel,
+      .wizard-card,
+      .wizard-body,
+      .wizard-pane {
+        min-width: 0;
       }
 
       .nav {
@@ -1186,9 +1219,10 @@
 
       .hero::before {
         background-image:
-          linear-gradient(180deg, rgba(5, 2, 3, 0.18), rgba(5, 2, 3, 0.28) 28%, rgba(5, 2, 3, 0.9) 76%, #050203 100%),
+          linear-gradient(180deg, rgba(5, 2, 3, 0.1), rgba(5, 2, 3, 0.18) 28%, rgba(5, 2, 3, 0.84) 76%, #050203 100%),
           url("assets/black-bull-hero.jpg");
-        background-position: 30% center;
+        background-size: auto 100%;
+        background-position: 18% center;
       }
 
       .hero::after {
@@ -1212,7 +1246,7 @@
       }
 
       h1 {
-        font-size: clamp(3rem, 16vw, 4.5rem);
+        font-size: clamp(2.7rem, 14vw, 3.65rem);
         line-height: 0.92;
         margin-bottom: 14px;
       }
@@ -1229,6 +1263,7 @@
         font-size: 1rem;
         line-height: 1.5;
         margin-bottom: 22px;
+        overflow-wrap: anywhere;
       }
 
       .hero-actions {
@@ -1272,6 +1307,7 @@
         margin-left: auto;
         margin-right: auto;
         line-height: 1.5;
+        overflow-wrap: anywhere;
       }
 
       .art-card.featured {
@@ -1362,6 +1398,41 @@
       .gallery,
       .details {
         padding: 46px 0;
+      }
+
+      .link-card {
+        min-width: 0;
+        min-height: auto;
+        padding: 12px;
+        gap: 6px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .link-card span {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+
+      .token-box strong {
+        font-size: 0.7rem;
+        word-break: break-all;
+      }
+
+      .wl-steps {
+        max-width: 100%;
+      }
+
+      .wizard-head {
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .wizard-kicker {
+        font-size: 0.64rem;
+        white-space: normal;
+        text-align: center;
       }
 
     }
@@ -1526,7 +1597,7 @@
           <div class="wl-header">
             <div>
               <p class="eyebrow">Whitelist application</p>
-              <h2 id="wlTitle">Enter the ANSEMS WL.</h2>
+              <h2 id="wlTitle">Enter ANSEMS WL.</h2>
               <p>Complete the steps below, then submit your X handle and ANSEM holding wallet for manual review.</p>
             </div>
             <span class="wl-status">WL OPEN</span>
