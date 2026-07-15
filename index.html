@@ -1713,6 +1713,9 @@
     function revealWhitelist() {
       wlSection.hidden = false;
       document.body.style.overflow = "hidden";
+      if (window.location.hash !== "#wl") {
+        window.history.pushState(null, "", "#wl");
+      }
       window.requestAnimationFrame(() => {
         xUsername.focus({ preventScroll: true });
       });
@@ -1722,10 +1725,13 @@
       }
     }
 
-    function hideWhitelist() {
+    function hideWhitelist(updateHash = true) {
       wlSection.hidden = true;
       document.body.style.overflow = "";
       formNote.textContent = "";
+      if (updateHash && window.location.hash === "#wl") {
+        window.history.pushState(null, "", window.location.pathname + window.location.search);
+      }
     }
 
     function normalizeHandle(value) {
@@ -1851,6 +1857,14 @@
       }
     });
 
+    window.addEventListener("popstate", () => {
+      if (window.location.hash === "#wl") {
+        revealWhitelist();
+      } else if (!wlSection.hidden) {
+        hideWhitelist(false);
+      }
+    });
+
     wlForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!validateStep(activeStep)) {
@@ -1900,6 +1914,9 @@
     wlSection.hidden = true;
 
     setStep(0);
+    if (window.location.hash === "#wl") {
+      revealWhitelist();
+    }
   </script>
 </body>
 </html>
