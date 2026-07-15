@@ -553,6 +553,60 @@
       background: linear-gradient(90deg, var(--red), var(--gold), var(--primary), var(--primary));
     }
 
+    .checker {
+      background:
+        radial-gradient(circle at 18% 18%, rgba(79, 254, 171, 0.1), transparent 34%),
+        #090304;
+    }
+
+    .checker-panel {
+      padding: clamp(20px, 4vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(79, 254, 171, 0.1), rgba(131, 94, 64, 0.08)),
+        var(--panel-solid);
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.3);
+    }
+
+    .checker-heading {
+      margin-bottom: 22px;
+    }
+
+    .checker-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .checker-form .cta {
+      min-width: 132px;
+    }
+
+    .checker-result {
+      min-height: 0;
+      margin: 14px 0 0;
+      color: var(--primary);
+      line-height: 1.55;
+    }
+
+    .checker-result.error {
+      color: #ffb4b4;
+    }
+
+    .checker-result:not(:empty) {
+      padding: 12px 14px;
+      border: 1px solid rgba(79, 254, 171, 0.22);
+      border-radius: 8px;
+      background: rgba(79, 254, 171, 0.07);
+    }
+
+    .checker-result.error:not(:empty) {
+      border-color: rgba(255, 142, 142, 0.26);
+      background: rgba(255, 142, 142, 0.08);
+    }
+
     .community {
       position: fixed;
       inset: 0;
@@ -1069,6 +1123,7 @@
       .section-heading,
       .story-grid,
       .details-grid,
+      .checker-form,
       .community-panel,
       .wl-header,
       .wl-layout {
@@ -1476,6 +1531,7 @@
         <a href="#story">Story</a>
         <a href="#gallery">Gallery</a>
         <a href="#details">Details</a>
+        <a href="#checker">WL Checker</a>
       </div>
       <a class="cta" href="#wl">Enter WL</a>
       <a class="icon-button" href="#wl" aria-label="Enter whitelist">
@@ -1505,6 +1561,12 @@
                 <path d="M4 5h16v14H4zM4 10h16M9 5v14" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
               </svg>
               View Collection
+            </a>
+            <a class="secondary" href="#checker">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m9 12 2 2 4-5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Check WL
             </a>
           </div>
           <div class="hero-stats" aria-label="Collection statistics">
@@ -1610,6 +1672,29 @@
             <strong>90%+</strong>
             <div class="bar" aria-label="Artwork completion over 90 percent"><span></span></div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="checker" id="checker">
+      <div class="section-inner">
+        <div class="checker-panel">
+          <div class="section-heading checker-heading">
+            <div>
+              <p class="eyebrow">Final WL Status</p>
+              <h2>Check your whitelist.</h2>
+            </div>
+            <p>Enter your X username or submitted Solana wallet to see whether you are already in the final ANSEMS WL.</p>
+          </div>
+          <form class="checker-form" id="wlCheckerForm" novalidate>
+            <div class="field">
+              <label for="wlCheckerInput">X username or wallet</label>
+              <input id="wlCheckerInput" type="text" placeholder="@yourhandle or Solana wallet" autocomplete="off" required>
+              <span class="field-error" id="wlCheckerError">Enter a valid X username or Solana wallet.</span>
+            </div>
+            <button class="cta" type="submit">Check WL</button>
+          </form>
+          <p class="checker-result" id="wlCheckerResult" aria-live="polite"></p>
         </div>
       </div>
     </section>
@@ -1772,6 +1857,10 @@
     const wlSection = document.querySelector("#wl");
     const closeWl = document.querySelector("#closeWl");
     const formNote = document.querySelector("#formNote");
+    const wlCheckerForm = document.querySelector("#wlCheckerForm");
+    const wlCheckerInput = document.querySelector("#wlCheckerInput");
+    const wlCheckerError = document.querySelector("#wlCheckerError");
+    const wlCheckerResult = document.querySelector("#wlCheckerResult");
     const wlProgress = document.querySelector("#wlProgress");
     const wlSteps = Array.from(document.querySelectorAll("[data-wl-step]"));
     const wlPanes = Array.from(document.querySelectorAll("[data-wl-pane]"));
@@ -1841,6 +1930,10 @@
 
     function isSolanaAddress(value) {
       return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value.trim());
+    }
+
+    function isHandle(value) {
+      return /^@?[A-Za-z0-9_]{1,15}$/.test(value.trim());
     }
 
     function isXLink(value) {
@@ -1931,6 +2024,62 @@
         formNote.classList.remove("error");
         formNote.textContent = "";
       });
+    });
+
+    wlCheckerInput.addEventListener("input", () => {
+      wlCheckerInput.classList.remove("invalid");
+      wlCheckerError.classList.remove("show");
+      wlCheckerResult.classList.remove("error");
+      wlCheckerResult.textContent = "";
+    });
+
+    wlCheckerForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const query = wlCheckerInput.value.trim();
+      const valid = isSolanaAddress(query) || isHandle(query);
+      wlCheckerInput.classList.toggle("invalid", !valid);
+      wlCheckerError.classList.toggle("show", !valid);
+
+      if (!valid) {
+        wlCheckerResult.classList.add("error");
+        wlCheckerResult.textContent = "Enter a valid X username or Solana wallet.";
+        return;
+      }
+
+      const submitButton = wlCheckerForm.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = "Checking...";
+      wlCheckerResult.classList.remove("error");
+      wlCheckerResult.textContent = "Checking final WL...";
+
+      try {
+        const response = await fetch("/api/wl-check", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query }),
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(result.error || "WL status could not be checked.");
+        }
+
+        if (result.found) {
+          const selected = result.selectedAt ? ` Selected ${new Date(result.selectedAt).toLocaleString()}.` : "";
+          wlCheckerResult.classList.remove("error");
+          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}`;
+        } else {
+          wlCheckerResult.classList.add("error");
+          wlCheckerResult.textContent = "No final WL match yet. If you submitted already, wait for manual review or raffle results.";
+        }
+      } catch (error) {
+        wlCheckerResult.classList.add("error");
+        wlCheckerResult.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
     });
 
     document.querySelectorAll("[data-next]").forEach((button) => {
