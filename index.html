@@ -1689,6 +1689,7 @@
     const commentedTask = document.querySelector("#commentedTask");
     const repostedTask = document.querySelector("#repostedTask");
     const termsTask = document.querySelector("#termsTask");
+    const wlSubmittedKey = "ansems_wl_submitted";
 
     const wizardMeta = [
       { title: "Identity", kicker: "01 Identity", copy: "" },
@@ -1715,6 +1716,10 @@
       window.requestAnimationFrame(() => {
         xUsername.focus({ preventScroll: true });
       });
+      if (window.localStorage.getItem(wlSubmittedKey) === "true") {
+        formNote.classList.remove("error");
+        formNote.textContent = "This browser already submitted a WL entry. Each X username and wallet can only enter once.";
+      }
     }
 
     function hideWhitelist() {
@@ -1881,6 +1886,7 @@
         }
 
         formNote.classList.remove("error");
+        window.localStorage.setItem(wlSubmittedKey, "true");
         formNote.textContent = "WL entry submitted. Your application is ready for manual review.";
       } catch (error) {
         formNote.classList.add("error");

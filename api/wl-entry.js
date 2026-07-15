@@ -72,6 +72,12 @@ module.exports = async function handler(request, response) {
 
   if (!insertResponse.ok) {
     const message = await insertResponse.text();
+    if (insertResponse.status === 409 || message.includes("duplicate key")) {
+      return json(response, 409, {
+        error: "This X username or wallet has already submitted a WL entry.",
+      });
+    }
+
     return json(response, 500, {
       error: "WL entry could not be saved.",
       detail: message,
