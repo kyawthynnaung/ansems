@@ -1172,9 +1172,9 @@
       }
 
       .hero {
-        min-height: 92vh;
+        min-height: 82vh;
         align-items: end;
-        padding: 112px 0 36px;
+        padding: 92px 0 28px;
       }
 
       .hero::before {
@@ -1205,12 +1205,13 @@
       }
 
       h1 {
-        font-size: clamp(3.25rem, 18vw, 5rem);
+        font-size: clamp(3rem, 16vw, 4.5rem);
         line-height: 0.92;
+        margin-bottom: 14px;
       }
 
       h2 {
-        font-size: clamp(2.25rem, 11vw, 3.25rem);
+        font-size: clamp(2rem, 9.5vw, 2.8rem);
         text-align: center;
       }
 
@@ -1219,12 +1220,13 @@
         margin-left: auto;
         margin-right: auto;
         font-size: 1rem;
-        line-height: 1.55;
+        line-height: 1.5;
+        margin-bottom: 22px;
       }
 
       .hero-actions {
         justify-content: center;
-        margin-bottom: 28px;
+        margin-bottom: 18px;
       }
 
       .hero-actions .cta,
@@ -1244,13 +1246,17 @@
 
       .stat {
         min-height: auto;
-        padding: 14px;
+        padding: 11px 14px;
         text-align: center;
       }
 
+      .stat strong {
+        font-size: 1.2rem;
+      }
+
       .section-heading {
-        gap: 14px;
-        margin-bottom: 28px;
+        gap: 10px;
+        margin-bottom: 20px;
         text-align: center;
       }
 
@@ -1258,7 +1264,7 @@
         max-width: 34rem;
         margin-left: auto;
         margin-right: auto;
-        line-height: 1.6;
+        line-height: 1.5;
       }
 
       .art-card.featured {
@@ -1272,8 +1278,9 @@
       .story-panel {
         min-height: auto;
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 16px;
         text-align: center;
+        padding: 18px;
       }
 
       .story-art img {
@@ -1281,25 +1288,31 @@
       }
 
       .story-art {
-        width: min(100%, 260px);
+        width: min(100%, 220px);
         margin: 0 auto;
         order: -1;
         aspect-ratio: 1;
       }
 
       .story-panel h3 {
-        font-size: clamp(1.8rem, 9vw, 2.6rem);
+        font-size: clamp(1.65rem, 8vw, 2.3rem);
+        margin-bottom: 8px;
       }
 
       .story-panel p {
         margin-left: auto;
         margin-right: auto;
-        line-height: 1.6;
+        line-height: 1.5;
       }
 
       .trait-strip {
         justify-content: center;
-        margin-top: 18px;
+        margin-top: 14px;
+        gap: 6px;
+      }
+
+      .trait-strip span {
+        padding: 7px 9px;
       }
 
       .split-item,
@@ -1309,17 +1322,24 @@
       }
 
       .split-item {
-        padding: 22px 18px;
+        padding: 18px;
       }
 
       .detail-panel {
         min-height: auto;
-        padding: 22px 18px;
-        gap: 12px;
+        padding: 18px;
+        gap: 10px;
       }
 
       .art-info {
+        padding: 12px;
         min-height: auto;
+      }
+
+      .art-info p,
+      .split-item p,
+      .detail-panel p {
+        line-height: 1.45;
       }
 
       .footer-inner {
@@ -1328,7 +1348,13 @@
       }
 
       section {
-        padding: 64px 0;
+        padding: 44px 0;
+      }
+
+      .story,
+      .gallery,
+      .details {
+        padding: 46px 0;
       }
 
     }
