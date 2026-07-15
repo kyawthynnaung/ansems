@@ -20,9 +20,9 @@
       --text: #fff7eb;
       --muted: #b6a392;
       --line: rgba(255, 226, 181, 0.16);
-      --red: #d72f2b;
-      --red-dark: #5c0d0f;
-      --gold: #d7a24a;
+      --red: #835E40;
+      --red-dark: #3f2a1c;
+      --gold: #FFDA7E;
       --green: #59f49b;
       --purple: #8e5bff;
       --black: #050203;
@@ -92,11 +92,11 @@
       height: 36px;
       display: grid;
       place-items: center;
-      border: 1px solid rgba(217, 164, 65, 0.45);
+      border: 1px solid rgba(255, 218, 126, 0.45);
       border-radius: 8px;
       color: var(--gold);
       background: linear-gradient(145deg, #2a090b, #0a0304);
-      box-shadow: inset 0 0 22px rgba(227, 51, 45, 0.18);
+      box-shadow: inset 0 0 22px rgba(131, 94, 64, 0.24);
     }
 
     .nav-links {
@@ -129,8 +129,8 @@
     .cta {
       padding: 0 18px;
       color: #120303;
-      background: linear-gradient(90deg, var(--gold), #ffe5ac);
-      box-shadow: 0 12px 38px rgba(217, 162, 74, 0.18);
+      background: linear-gradient(90deg, #FFDA7E, #fff0bf);
+      box-shadow: 0 12px 38px rgba(255, 218, 126, 0.2);
     }
 
     .secondary {
@@ -192,8 +192,8 @@
       inset: 0;
       z-index: -1;
       background:
-        linear-gradient(rgba(217, 164, 65, 0.042) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(217, 164, 65, 0.042) 1px, transparent 1px);
+        linear-gradient(rgba(255, 218, 126, 0.042) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 218, 126, 0.042) 1px, transparent 1px);
       background-size: 86px 86px, 86px 86px;
       opacity: 0.34;
       mask-image: linear-gradient(180deg, transparent, black 16%, black 82%, transparent);
@@ -339,8 +339,8 @@
       gap: clamp(20px, 3vw, 32px);
       align-items: center;
       background:
-        linear-gradient(135deg, rgba(227, 51, 45, 0.13), transparent 34%),
-        linear-gradient(315deg, rgba(217, 164, 65, 0.13), transparent 34%),
+        linear-gradient(135deg, rgba(131, 94, 64, 0.2), transparent 34%),
+        linear-gradient(315deg, rgba(255, 218, 126, 0.14), transparent 34%),
         var(--panel-solid);
     }
 
@@ -348,7 +348,7 @@
       width: 100%;
       aspect-ratio: 0.82;
       padding: 8px;
-      border: 1px solid rgba(217, 162, 74, 0.28);
+      border: 1px solid rgba(255, 218, 126, 0.28);
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.045);
       box-shadow: 0 24px 58px rgba(0, 0, 0, 0.28);
@@ -371,10 +371,10 @@
       display: inline-flex;
       margin-bottom: 12px;
       padding: 7px 9px;
-      border: 1px solid rgba(217, 162, 74, 0.22);
+      border: 1px solid rgba(255, 218, 126, 0.22);
       border-radius: 8px;
       color: var(--gold);
-      background: rgba(217, 162, 74, 0.08);
+      background: rgba(131, 94, 64, 0.16);
       font-size: 0.72rem;
       font-weight: 900;
       text-transform: uppercase;
@@ -583,7 +583,7 @@
       overflow: auto;
       background:
         linear-gradient(180deg, rgba(255, 247, 235, 0.045), transparent 18%),
-        linear-gradient(135deg, rgba(217, 164, 65, 0.12), rgba(227, 51, 45, 0.04)),
+        linear-gradient(135deg, rgba(255, 218, 126, 0.12), rgba(131, 94, 64, 0.08)),
         var(--panel-solid);
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
     }
@@ -605,8 +605,8 @@
     }
 
     .modal-close:hover {
-      border-color: rgba(217, 162, 74, 0.45);
-      background: rgba(217, 162, 74, 0.12);
+      border-color: rgba(255, 218, 126, 0.45);
+      background: rgba(131, 94, 64, 0.18);
       transform: translateY(-1px);
     }
 
@@ -788,8 +788,8 @@
 
     .wl-step.active {
       color: var(--gold);
-      border-color: rgba(217, 162, 74, 0.32);
-      background: rgba(217, 162, 74, 0.09);
+      border-color: rgba(255, 218, 126, 0.34);
+      background: rgba(131, 94, 64, 0.16);
     }
 
     .wl-step span:first-child {
@@ -839,9 +839,9 @@
       text-transform: uppercase;
       white-space: nowrap;
       padding: 6px 8px;
-      border: 1px solid rgba(217, 162, 74, 0.18);
+      border: 1px solid rgba(255, 218, 126, 0.2);
       border-radius: 8px;
-      background: rgba(217, 162, 74, 0.07);
+      background: rgba(131, 94, 64, 0.14);
     }
 
     .wizard-body {
@@ -924,8 +924,8 @@
     }
 
     .field input:focus {
-      border-color: rgba(217, 162, 74, 0.72);
-      box-shadow: 0 0 0 3px rgba(217, 162, 74, 0.12);
+      border-color: rgba(255, 218, 126, 0.72);
+      box-shadow: 0 0 0 3px rgba(255, 218, 126, 0.12);
     }
 
     .field input.invalid {
