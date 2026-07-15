@@ -55,8 +55,7 @@ module.exports = async function handler(request, response) {
     });
 
     if (!raffleResponse.ok) {
-      const detail = await raffleResponse.text();
-      return json(response, 500, { error: "Could not create raffle record.", detail });
+      return json(response, 500, { error: "Could not create raffle record." });
     }
 
     const [raffle] = await raffleResponse.json();
@@ -75,8 +74,7 @@ module.exports = async function handler(request, response) {
     });
 
     if (!insertWinnersResponse.ok) {
-      const detail = await insertWinnersResponse.text();
-      return json(response, 500, { error: "Could not save raffle winners.", detail });
+      return json(response, 500, { error: "Could not save raffle winners." });
     }
 
     const winners = await insertWinnersResponse.json();

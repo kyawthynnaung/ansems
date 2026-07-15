@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 const getConfig = () => {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -15,7 +17,19 @@ const getConfig = () => {
 const json = (response, status, body) => {
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json");
+  response.setHeader("Cache-Control", "no-store");
   response.end(JSON.stringify(body));
+};
+
+const safeEqual = (left = "", right = "") => {
+  const leftBuffer = Buffer.from(String(left));
+  const rightBuffer = Buffer.from(String(right));
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
 };
 
 const assertAdmin = (request) => {
@@ -26,7 +40,7 @@ const assertAdmin = (request) => {
     return "Admin access is not configured yet.";
   }
 
-  if (!providedKey || providedKey !== adminKey) {
+  if (!providedKey || !safeEqual(providedKey, adminKey)) {
     return "Unauthorized.";
   }
 

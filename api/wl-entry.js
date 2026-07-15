@@ -1,6 +1,7 @@
 const json = (response, status, body) => {
   response.statusCode = status;
   response.setHeader("Content-Type", "application/json");
+  response.setHeader("Cache-Control", "no-store");
   response.end(JSON.stringify(body));
 };
 
@@ -34,6 +35,10 @@ module.exports = async function handler(request, response) {
 
   if (!/^@[A-Za-z0-9_]{1,15}$/.test(xUsername)) {
     return json(response, 400, { error: "Enter a valid X username." });
+  }
+
+  if (commentLink.length > 240 || walletAddress.length > 64) {
+    return json(response, 400, { error: "Submitted values are too long." });
   }
 
   if (!isSolanaAddress(walletAddress)) {
@@ -80,7 +85,6 @@ module.exports = async function handler(request, response) {
 
     return json(response, 500, {
       error: "WL entry could not be saved.",
-      detail: message,
     });
   }
 
