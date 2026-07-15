@@ -13,7 +13,7 @@ module.exports = async function handler(request, response) {
 
   try {
     const entriesResponse = await supabaseFetch(
-      "wl_entries?select=id,x_username,wallet_address,comment_link,created_at&order=created_at.desc"
+      "wl_entries?select=id,x_username,wallet_address,comment_link,liked_post,commented_post,reposted_post,confirmed,created_at&order=created_at.desc"
     );
     const winnersResponse = await supabaseFetch(
       "wl_winners?select=id,entry_id,x_username,wallet_address,comment_link,selected_at&order=selected_at.desc"

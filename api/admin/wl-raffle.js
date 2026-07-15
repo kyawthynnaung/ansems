@@ -10,6 +10,10 @@ const shuffle = (items) => {
   return result;
 };
 
+const isUuid = (value) =>
+  typeof value === "string" &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+
 module.exports = async function handler(request, response) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -26,6 +30,11 @@ module.exports = async function handler(request, response) {
     return json(response, 400, { error: "Enter a valid winner count." });
   }
 
+  const reviewedEntryIds = Array.isArray(request.body?.reviewedEntryIds)
+    ? request.body.reviewedEntryIds.filter(isUuid)
+    : [];
+  const reviewedEntryIdSet = new Set(reviewedEntryIds);
+
   try {
     const entriesResponse = await supabaseFetch(
       "wl_entries?select=id,x_username,wallet_address,comment_link,created_at&order=created_at.asc"
@@ -39,10 +48,18 @@ module.exports = async function handler(request, response) {
     const entries = await entriesResponse.json();
     const existingWinners = await winnersResponse.json();
     const existingWinnerIds = new Set(existingWinners.map((winner) => winner.entry_id));
-    const eligibleEntries = entries.filter((entry) => !existingWinnerIds.has(entry.id));
+    const eligibleEntries = entries.filter((entry) => {
+      if (existingWinnerIds.has(entry.id)) return false;
+      if (reviewedEntryIdSet.size > 0 && !reviewedEntryIdSet.has(entry.id)) return false;
+      return true;
+    });
 
     if (eligibleEntries.length === 0) {
-      return json(response, 400, { error: "There are no eligible entries left to raffle." });
+      return json(response, 400, {
+        error: reviewedEntryIdSet.size > 0
+          ? "There are no reviewed eligible entries left to raffle."
+          : "There are no eligible entries left to raffle.",
+      });
     }
 
     const selectedEntries = shuffle(eligibleEntries).slice(0, Math.min(winnerCount, eligibleEntries.length));
@@ -84,6 +101,7 @@ module.exports = async function handler(request, response) {
       totals: {
         entries: entries.length,
         eligibleBeforeDraw: eligibleEntries.length,
+        reviewedPool: reviewedEntryIdSet.size,
         selected: winners.length,
       },
     });
