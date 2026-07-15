@@ -154,6 +154,13 @@
       transform: translateY(-2px);
     }
 
+    .cta:disabled,
+    .secondary:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+      transform: none;
+    }
+
     .hero {
       min-height: 94vh;
       position: relative;
@@ -1839,13 +1846,49 @@
       }
     });
 
-    wlForm.addEventListener("submit", (event) => {
+    wlForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!validateStep(activeStep)) {
         return;
       }
+      const submitButton = wlForm.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
       formNote.classList.remove("error");
-      formNote.textContent = "WL entry ready. Final submissions will open when the official collection form is connected.";
+      formNote.textContent = "Submitting WL entry...";
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+
+      try {
+        const response = await fetch("/api/wl-entry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            xUsername: xUsername.value,
+            walletAddress: walletAddress.value,
+            commentLink: commentLink.value,
+            tasks: {
+              liked: likedTask.checked,
+              commented: commentedTask.checked,
+              reposted: repostedTask.checked,
+              confirmed: termsTask.checked,
+            },
+          }),
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(result.error || "WL entry could not be submitted.");
+        }
+
+        formNote.classList.remove("error");
+        formNote.textContent = "WL entry submitted. Your application is ready for manual review.";
+      } catch (error) {
+        formNote.classList.add("error");
+        formNote.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
     });
 
     wlSection.hidden = true;
