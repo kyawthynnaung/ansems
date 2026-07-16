@@ -2066,6 +2066,13 @@
         }
 
         if (result.found) {
+          if (result.source === "manual-wallet") {
+            const holderText = result.holder?.found ? ` Top 1K holder rank: #${result.holder.rank}.` : "";
+            wlCheckerResult.classList.remove("error");
+            wlCheckerResult.textContent = `This wallet is on the final WL.${holderText}`;
+            return;
+          }
+
           if (result.source === "top-holder") {
             wlCheckerResult.classList.remove("error");
             wlCheckerResult.textContent = `This wallet is on the final WL as a top 1,000 $ANSEM holder. Holder rank: #${result.holder.rank}.`;
@@ -2074,8 +2081,9 @@
 
           const selected = result.selectedAt ? ` Selected ${new Date(result.selectedAt).toLocaleString()}.` : "";
           const holderText = result.holder?.found ? ` Top 1K holder rank: #${result.holder.rank}.` : "";
+          const manualText = result.manualWallet ? " Manually whitelisted wallet." : "";
           wlCheckerResult.classList.remove("error");
-          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}${holderText}`;
+          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}${holderText}${manualText}`;
         } else {
           wlCheckerResult.classList.add("error");
           wlCheckerResult.textContent = "No final WL match yet. If you submitted already, wait for manual review or raffle results.";

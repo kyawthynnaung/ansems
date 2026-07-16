@@ -12,18 +12,29 @@ const isHandle = (value = "") => /^@?[A-Za-z0-9_]{1,15}$/.test(String(value).tri
 const isSolanaAddress = (value = "") => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(String(value).trim());
 const maskWallet = (value = "") => `${value.slice(0, 4)}...${value.slice(-4)}`;
 let holderRankCache;
+let manualWalletCache;
+
+const readWalletList = (filename) => {
+  const filePath = path.join(process.cwd(), "data", filename);
+  return fs.readFileSync(filePath, "utf8")
+    .split(/\r?\n/)
+    .map((row) => row.trim())
+    .filter(Boolean);
+};
 
 const getHolderRanks = () => {
   if (holderRankCache) return holderRankCache;
 
-  const filePath = path.join(process.cwd(), "data", "ansem-top-holder-accounts.txt");
-  const rows = fs.readFileSync(filePath, "utf8")
-    .split(/\r?\n/)
-    .map((row) => row.trim())
-    .filter(Boolean);
-
+  const rows = readWalletList("ansem-top-holder-accounts.txt");
   holderRankCache = new Map(rows.map((wallet, index) => [wallet, index + 1]));
   return holderRankCache;
+};
+
+const getManualWallets = () => {
+  if (manualWalletCache) return manualWalletCache;
+
+  manualWalletCache = new Set(readWalletList("manual-wl-wallets.txt"));
+  return manualWalletCache;
 };
 
 module.exports = async function handler(request, response) {
@@ -46,7 +57,36 @@ module.exports = async function handler(request, response) {
 
   try {
     const holderRanks = getHolderRanks();
+    const manualWallets = getManualWallets();
     const queriedHolderRank = walletLookup ? holderRanks.get(query) || null : null;
+    const queriedManualWallet = walletLookup && manualWallets.has(query);
+
+    if (queriedManualWallet) {
+      return json(response, 200, {
+        found: true,
+        source: "manual-wallet",
+        wallet: maskWallet(query),
+        holder: {
+          checked: true,
+          found: Boolean(queriedHolderRank),
+          rank: queriedHolderRank,
+        },
+      });
+    }
+
+    if (queriedHolderRank) {
+      return json(response, 200, {
+        found: true,
+        source: "top-holder",
+        wallet: maskWallet(query),
+        holder: {
+          checked: true,
+          found: true,
+          rank: queriedHolderRank,
+        },
+      });
+    }
+
     const filter = walletLookup
       ? `wallet_address=eq.${encodeURIComponent(query)}`
       : `x_username=ilike.${encodeURIComponent(normalizeHandle(query))}`;
@@ -60,19 +100,6 @@ module.exports = async function handler(request, response) {
 
     const [winner] = await winnerResponse.json();
     if (!winner) {
-      if (queriedHolderRank) {
-        return json(response, 200, {
-          found: true,
-          source: "top-holder",
-          wallet: maskWallet(query),
-          holder: {
-            checked: true,
-            found: true,
-            rank: queriedHolderRank,
-          },
-        });
-      }
-
       return json(response, 200, {
         found: false,
         source: "none",
@@ -85,6 +112,7 @@ module.exports = async function handler(request, response) {
     }
 
     const winnerHolderRank = holderRanks.get(winner.wallet_address) || null;
+    const winnerManualWallet = manualWallets.has(winner.wallet_address);
     return json(response, 200, {
       found: true,
       source: "wl-winner",
@@ -96,6 +124,7 @@ module.exports = async function handler(request, response) {
         found: Boolean(winnerHolderRank),
         rank: winnerHolderRank,
       },
+      manualWallet: winnerManualWallet,
     });
   } catch (error) {
     return json(response, 500, { error: "WL status could not be checked." });
