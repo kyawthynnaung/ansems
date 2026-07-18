@@ -24,7 +24,7 @@ const readWalletList = (filename) => {
 const getFinalWallets = () => {
   if (finalWalletCache) return finalWalletCache;
 
-  finalWalletCache = new Set(readWalletList("ansem-top-holder-accounts.csv"));
+  finalWalletCache = new Set(readWalletList("Final WL.csv"));
   return finalWalletCache;
 };
 
