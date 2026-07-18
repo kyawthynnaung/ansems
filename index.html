@@ -1681,10 +1681,10 @@
         <div class="checker-panel">
           <div class="section-heading checker-heading">
             <div>
-              <p class="eyebrow">WL / Holder Status</p>
+              <p class="eyebrow">Final WL Status</p>
               <h2>Check your status.</h2>
             </div>
-            <p>Enter your X username or wallet to check final WL status. Wallets in the final $ANSEM holder list are treated as final WL.</p>
+            <p>Enter your X username or wallet to check whether it is on the Final WL.</p>
           </div>
           <form class="checker-form" id="wlCheckerForm" novalidate>
             <div class="field">
@@ -2074,27 +2074,11 @@
         }
 
         if (result.found) {
-          if (result.source === "manual-wallet") {
-            const holderText = result.holder?.found ? ` Holder-list position: #${result.holder.rank}.` : "";
-            wlCheckerResult.classList.remove("error");
-            wlCheckerResult.textContent = `This wallet is on the final WL.${holderText}`;
-            return;
-          }
-
-          if (result.source === "top-holder") {
-            wlCheckerResult.classList.remove("error");
-            wlCheckerResult.textContent = `This wallet is on the final WL from the $ANSEM holder list. List position: #${result.holder.rank}.`;
-            return;
-          }
-
-          const selected = result.selectedAt ? ` Selected ${new Date(result.selectedAt).toLocaleString()}.` : "";
-          const holderText = result.holder?.found ? ` Holder-list position: #${result.holder.rank}.` : "";
-          const manualText = result.manualWallet ? " Manually whitelisted wallet." : "";
           wlCheckerResult.classList.remove("error");
-          wlCheckerResult.textContent = `${result.xUsername} is on the final WL with wallet ${result.wallet}.${selected}${holderText}${manualText}`;
+          wlCheckerResult.textContent = `${result.wallet} is on the Final WL.`;
         } else {
           wlCheckerResult.classList.add("error");
-          wlCheckerResult.textContent = "No final WL match yet. If you submitted already, wait for manual review or raffle results.";
+          wlCheckerResult.textContent = "This X username or wallet is not on the Final WL.";
         }
       } catch (error) {
         wlCheckerResult.classList.add("error");
