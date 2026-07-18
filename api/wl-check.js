@@ -18,13 +18,13 @@ const readWalletList = (filename) => {
   return fs.readFileSync(filePath, "utf8")
     .split(/\r?\n/)
     .map((row) => row.trim())
-    .filter(Boolean);
+    .filter((row) => row && row !== "wallet_address");
 };
 
 const getFinalWallets = () => {
   if (finalWalletCache) return finalWalletCache;
 
-  finalWalletCache = new Set(readWalletList("ansem-top-holder-accounts.txt"));
+  finalWalletCache = new Set(readWalletList("ansem-top-holder-accounts.csv"));
   return finalWalletCache;
 };
 
