@@ -24,6 +24,8 @@ module.exports = async function handler(request, response) {
     return json(response, 405, { error: "Method not allowed." });
   }
 
+  return json(response, 410, { error: "Whitelist applications are closed." });
+
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
